@@ -14,6 +14,9 @@ import { useTheme } from "@material-ui/core/styles";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import MenuIcon from "@material-ui/icons/Menu";
 import IconButton from "@material-ui/core/IconButton";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
 
 function HideOnScroll(props) {
   const { children, window } = props;
@@ -59,6 +62,12 @@ const useStyles = makeStyles((theme) => ({
     height: "30px",
     width: "30px",
   },
+
+  drawer: { backgroundColor: theme.palette.common.blue },
+
+  drawerItemText: { ...theme.typography.tab, opacity: 0.7 },
+
+  drawerItemTextSelected: { "& .MuiListItemText-root": { opacity: 1 } },
 }));
 
 export default function Header(props) {
@@ -183,7 +192,69 @@ export default function Header(props) {
         open={openDrawer}
         onOpen={() => setOpenDrawer(true)}
         onClose={() => setOpenDrawer(false)}
-      ></SwipeableDrawer>
+        classes={{ paper: classes.drawer }}
+      >
+        <List disablePadding>
+          <ListItem
+            component={Link}
+            to='/'
+            divider
+            button
+            onClick={() => setOpenDrawer(false)}
+            classes={{ selected: classes.drawerItemTextSelected }}
+          >
+            <ListItemText className={classes.drawerItemText}>Home</ListItemText>
+          </ListItem>
+          <ListItem
+            component={Link}
+            to='/training'
+            divider
+            button
+            onClick={() => setOpenDrawer(false)}
+            classes={{ selected: classes.drawerItemTextSelected }}
+          >
+            <ListItemText className={classes.drawerItemText}>
+              Training
+            </ListItemText>
+          </ListItem>
+          <ListItem
+            component={Link}
+            to='/skills'
+            divider
+            button
+            onClick={() => setOpenDrawer(false)}
+            classes={{ selected: classes.drawerItemTextSelected }}
+          >
+            <ListItemText className={classes.drawerItemText}>
+              Skills
+            </ListItemText>
+          </ListItem>
+          <ListItem
+            component={Link}
+            to='/projects'
+            divider
+            button
+            onClick={() => setOpenDrawer(false)}
+            classes={{ selected: classes.drawerItemTextSelected }}
+          >
+            <ListItemText className={classes.drawerItemText}>
+              Projects
+            </ListItemText>
+          </ListItem>
+          <ListItem
+            component={Link}
+            to='/contact'
+            divider
+            button
+            onClick={() => setOpenDrawer(false)}
+            classes={{ selected: classes.drawerItemTextSelected }}
+          >
+            <ListItemText className={classes.drawerItemText}>
+              Contact
+            </ListItemText>
+          </ListItem>
+        </List>
+      </SwipeableDrawer>
       <IconButton
         onClick={() => setOpenDrawer(!openDrawer)}
         className={classes.drawerIconContainer}
