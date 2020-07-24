@@ -46,7 +46,10 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 5,
     marginLeft: "25px",
   },
-  menu: { backgroundColor: theme.palette.common.blue, borderRadius: "0px" },
+  menu: {
+    backgroundColor: theme.palette.common.blue,
+    borderRadius: "0px",
+  },
   menuItem: {
     ...theme.typography.tab,
     opacity: 0.7,
@@ -68,6 +71,8 @@ const useStyles = makeStyles((theme) => ({
   drawerItemText: { ...theme.typography.tab, opacity: 0.7 },
 
   drawerItemTextSelected: { "& .MuiListItemText-root": { opacity: 1 } },
+
+  appbar: { zIndex: theme.zIndex.modal + 1 },
 }));
 
 export default function Header(props) {
@@ -75,15 +80,30 @@ export default function Header(props) {
 
   const [value, setValue] = useState(0);
 
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [openMenu, setOpenMenu] = useState(false);
 
-  const [selectedIndex, setSelectedIndex] = useState(0);
-
   const menuOptions = [
-    { name: "Project 1", link: "/project1" },
-    { name: "Project 2", link: "/project2" },
-    { name: "Project 3", link: "/project3" },
+    { name: "Project 1", link: "/project1", activeIndex: 3, selectedIndex: 0 },
+    { name: "Project 2", link: "/project2", activeIndex: 3, selectedIndex: 0 },
+    { name: "Project 3", link: "/project3", activeIndex: 3, selectedIndex: 0 },
+  ];
+
+  const routes = [
+    { name: "Home", link: "/", activeIndex: 0 },
+    { name: "Training", link: "/training", activeIndex: 1 },
+    { name: "Skills", link: "/skills", activeIndex: 2 },
+    {
+      name: "Projects",
+      link: "/projects",
+      activeIndex: 3,
+      ariaOwns: anchorEl ? "projects-menu" : undefined,
+      ariaHaspopup: anchorEl ? "true" : undefined,
+      mouseOver: (e) => handleClick(e),
+    },
+    { name: "Contact", link: "/contact", activeIndex: 4 },
   ];
 
   const handleMenuItemClick = (e, i) => {
@@ -112,45 +132,20 @@ export default function Header(props) {
 
   const tabs = (
     <>
-      <Tabs
-        className={classes.tabContainer}
-        value={value}
-        onChange={handleChange}
-      >
-        <Tab label='Home' className={classes.tab} component={Link} to='/' />
-        <Tab
-          label='Training'
-          className={classes.tab}
-          component={Link}
-          to='/training'
-        />
-        <Tab
-          label='Skills'
-          className={classes.tab}
-          component={Link}
-          to='/skills'
-        />
-        <Tab
-          label='Projects'
-          className={classes.tab}
-          component={Link}
-          to='/projects'
-          aria-owns={anchorEl ? "projects-menu" : undefined}
-          aria-haspopup={anchorEl ? "true" : undefined}
-          onClick={(e) => {
-            handleClick(e);
-          }}
-          onMouseOver={(e) => {
-            handleClick(e);
-          }}
-        />
-        <Tab
-          label='Contact'
-          className={classes.tab}
-          component={Link}
-          to='/contact'
-        />
-      </Tabs>
+      <div className={classes.tabContainer}>
+        {routes.map((route) => (
+          <Tab
+            key={`${route}`}
+            className={classes.tab}
+            label={route.name}
+            component={Link}
+            to={route.link}
+            aria-owns={route.ariaOwns}
+            aria-haspopup={route.ariaPopup}
+            onMouseOver={route.mouseOver}
+          ></Tab>
+        ))}
+      </div>
       <Menu
         anchorEl={anchorEl}
         id='projects-menu'
@@ -159,6 +154,7 @@ export default function Header(props) {
         MenuListProps={{ onMouseLeave: handleClose }}
         elevation={0}
         classes={{ paper: classes.menu }}
+        style={{ zIndex: 1302 }}
       >
         {menuOptions.map((option, i) => (
           <MenuItem
@@ -195,64 +191,26 @@ export default function Header(props) {
         classes={{ paper: classes.drawer }}
       >
         <List disablePadding>
-          <ListItem
-            component={Link}
-            to='/'
-            divider
-            button
-            onClick={() => setOpenDrawer(false)}
-            classes={{ selected: classes.drawerItemTextSelected }}
-          >
-            <ListItemText className={classes.drawerItemText}>Home</ListItemText>
-          </ListItem>
-          <ListItem
-            component={Link}
-            to='/training'
-            divider
-            button
-            onClick={() => setOpenDrawer(false)}
-            classes={{ selected: classes.drawerItemTextSelected }}
-          >
-            <ListItemText className={classes.drawerItemText}>
-              Training
-            </ListItemText>
-          </ListItem>
-          <ListItem
-            component={Link}
-            to='/skills'
-            divider
-            button
-            onClick={() => setOpenDrawer(false)}
-            classes={{ selected: classes.drawerItemTextSelected }}
-          >
-            <ListItemText className={classes.drawerItemText}>
-              Skills
-            </ListItemText>
-          </ListItem>
-          <ListItem
-            component={Link}
-            to='/projects'
-            divider
-            button
-            onClick={() => setOpenDrawer(false)}
-            classes={{ selected: classes.drawerItemTextSelected }}
-          >
-            <ListItemText className={classes.drawerItemText}>
-              Projects
-            </ListItemText>
-          </ListItem>
-          <ListItem
-            component={Link}
-            to='/contact'
-            divider
-            button
-            onClick={() => setOpenDrawer(false)}
-            classes={{ selected: classes.drawerItemTextSelected }}
-          >
-            <ListItemText className={classes.drawerItemText}>
-              Contact
-            </ListItemText>
-          </ListItem>
+          <div className={classes.toolbarMargin} />
+          {routes.map((route) => (
+            <ListItem
+              key={`${route}${route.activeIndex}`}
+              divider
+              button
+              component={Link}
+              to={route.link}
+              selected={value === route.activeIndex}
+              classes={{ selected: classes.drawerItemSelectedText }}
+              onClick={() => {
+                setOpenDrawer(false);
+                setValue(route.activeIndex);
+              }}
+            >
+              <ListItemText className={classes.drawerItemText}>
+                {route.name}
+              </ListItemText>
+            </ListItem>
+          ))}
         </List>
       </SwipeableDrawer>
       <IconButton
@@ -266,18 +224,26 @@ export default function Header(props) {
   );
 
   useEffect(() => {
-    let path = window.location.pathname;
-    if (path === "/" && value !== 0) setValue(0);
-    else if (path === "/training" && value !== 1) setValue(1);
-    else if (path === "/skills" && value !== 2) setValue(2);
-    else if (path === "/projects" && value !== 3) setValue(3);
-    else if (path === "/contact" && value !== 4) setValue(4);
-  }, [value]);
+    [...menuOptions, ...routes].forEach((route) => {
+      switch (window.location.pathname) {
+        case `${route.link}`:
+          if (value !== route.activeIndex) {
+            setValue(route.activeIndex);
+            if (route.selectedIndex && route.selectedIndex !== selectedIndex) {
+              setSelectedIndex(route.selectedIndex);
+            }
+          }
+          break;
+        default:
+          break;
+      }
+    });
+  }, [value, menuOptions, selectedIndex, routes]);
 
   return (
     <>
       <HideOnScroll>
-        <AppBar color='secondary'>
+        <AppBar color='secondary' className={classes.appbar}>
           <Toolbar>
             <Button component={Link} to='/'>
               <img src={logo} alt='logo' className={classes.logo} />

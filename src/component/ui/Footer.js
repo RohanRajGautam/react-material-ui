@@ -11,8 +11,8 @@ const useStyles = makeStyles((theme) => ({
   [theme.breakpoints.down("xs")]: { padding: "0.3em" },
 
   copyright: { fontSize: "1em", color: "white" },
-  [theme.breakpoints.down("sm")]: { fontSize: "0.8em" },
-  [theme.breakpoints.down("xs")]: { fontSize: "0.7em" },
+  [theme.breakpoints.down("sm")]: { width: "0.8em" },
+  [theme.breakpoints.down("xs")]: { width: "0.7em" },
 
   logo: { width: "10em" },
   [theme.breakpoints.down("sm")]: { width: "8em" },
@@ -27,11 +27,11 @@ export default function Footer(props) {
       <Grid
         container
         justify='space-around'
-        alignItems='center'
+        alignitems='center'
         className={classes.privacy}
       >
         <Grid item className={classes.copyright}>
-          <p>Skilltransfers &copy; 2020</p>{" "}
+          <p>skilltransfers &copy; 2020</p>
         </Grid>
         <Grid item className={classes.logo}>
           <img src={logo} alt='logo' />
